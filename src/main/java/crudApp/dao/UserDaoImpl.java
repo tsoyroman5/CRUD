@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
 public class UserDaoImpl implements UserDao {
 
-    @Autowired
+    @PersistenceContext(unitName = "getEntityManager")
     private EntityManager entityManager;
 
     @Override
@@ -20,9 +21,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void addUser(User user) {
-        entityManager.getTransaction().begin();
         entityManager.persist(user);
-        entityManager.getTransaction().commit();
     }
 
     @Override
@@ -37,16 +36,11 @@ public class UserDaoImpl implements UserDao {
         userToBeUpdated.setName(user.getName());
         userToBeUpdated.setSurname(user.getSurname());
         userToBeUpdated.setAge(user.getAge());
-        entityManager.getTransaction().begin();
         entityManager.merge(userToBeUpdated);
-        entityManager.getTransaction().commit();
-
     }
 
     @Override
     public void deleteUser(Long id) {
-        entityManager.getTransaction().begin();
         entityManager.remove(entityManager.find(User.class, id));
-        entityManager.getTransaction().commit();
     }
 }
